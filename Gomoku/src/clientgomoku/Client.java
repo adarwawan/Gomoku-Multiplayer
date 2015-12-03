@@ -11,18 +11,21 @@ import java.net.*;
  *
  * @author adar
  */
-public class client {
+public class Client {
     /* data */
     private Socket cliSocket;
     private String addr;
     private int port;
     
     /* method */
-    public client(String _addr, int _port) throws IOException {
+    public Client(String _addr, int _port) throws IOException {
         addr = _addr;
         port = _port;
+        
         BufferedReader inFromUser = new BufferedReader( new InputStreamReader(System.in));
+        
         cliSocket = new Socket(addr, port);
+        
         DataOutputStream outToServer = new DataOutputStream(cliSocket.getOutputStream());
         BufferedReader inFromServer = new BufferedReader(new InputStreamReader(cliSocket.getInputStream()));
         

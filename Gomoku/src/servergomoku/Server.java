@@ -12,20 +12,21 @@ import java.net.*;
  *
  * @author adar
  */
-public class server {
+public class Server {
     /* data */
     private ServerSocket srvSocket;
     private int port;
     
     
     /* method */
-    public server (int _port) throws IOException {
+    public Server (int _port) throws IOException {
         port = _port;
         srvSocket = new ServerSocket(port);
         
         // Start Run
         while (true) {
             Socket connectionSocket = srvSocket.accept();
+            
             BufferedReader inFromClient = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
             DataOutputStream outToClient = new DataOutputStream(connectionSocket.getOutputStream());
             
@@ -35,7 +36,7 @@ public class server {
             System.out.println("Data dari Client: " + clientSentence);
             
             // Bales pesan ke client
-            outToClient.writeBytes(clientSentence);
+            outToClient.writeBytes(clientSentence + '\n');
         }
     }
 }
