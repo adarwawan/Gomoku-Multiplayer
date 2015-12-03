@@ -7,6 +7,8 @@ package servergomoku;
 
 import java.io.*;
 import java.net.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -26,7 +28,7 @@ public class Server {
         
         // Start Run
         try {
-            while (true) {
+            while(true) {
                 new Capitalizer(srvSocket.accept(), clientNumber++).start();
             }
         } finally {
@@ -34,22 +36,6 @@ public class Server {
         }
     }
         
-        /*
-        while (true) {
-            Socket connectionSocket = srvSocket.accept();
-            System.out.println("Fanda");
-            BufferedReader inFromClient = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
-            DataOutputStream outToClient = new DataOutputStream(connectionSocket.getOutputStream());
-            
-            // Data yang ditangkap dari client
-            String clientSentence = inFromClient.readLine();
-            
-            System.out.println("Data dari Client: " + clientSentence);
-            
-            // Bales pesan ke client
-            outToClient.writeBytes(clientSentence + '\n');
-        } 
-        */
     
     private static class Capitalizer extends Thread {
         private Socket socket;
@@ -63,13 +49,20 @@ public class Server {
         
         public void run() {
             try {
-
-                BufferedReader in = new BufferedReader(
-                        new InputStreamReader(socket.getInputStream()));
+                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-                String clientSentence = in.readLine();
-                System.out.println("Received: " + clientSentence);
-                out.writeBytes(clientSentence + '\n');
+                
+                // Kasih ucapan selamat datang dulu
+                String welcomeMessage = "Welcome, Fanda";
+                out.writeBytes(welcomeMessage + '\n');
+                
+                String clientSentence;
+                do {
+                    clientSentence = in.readLine();
+                    System.out.println("Received: " + clientSentence);
+                    out.writeBytes(clientSentence + '\n');
+                } while (!clientSentence.equals("Disconnect"));
+                
             } catch (IOException e) {
                 log("Error handling client# " + clientNumber + ": " + e);
             } finally {

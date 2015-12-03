@@ -28,14 +28,22 @@ public class Client {
         
         DataOutputStream outToServer = new DataOutputStream(cliSocket.getOutputStream());
         BufferedReader inFromServer = new BufferedReader(new InputStreamReader(cliSocket.getInputStream()));
+
+        String welcomeMessage = inFromServer.readLine();
+        System.out.println(welcomeMessage);
         
+        String sentence;
+        
+        do {
         // Data yang dikirim ke server
-        String sentence = inFromUser.readLine();
-        outToServer.writeBytes(sentence + '\n');
+            sentence = inFromUser.readLine();
+            outToServer.writeBytes(sentence + '\n');
         
-        // Data yang diterima dari server
-        String srvSentence = inFromServer.readLine();
-        System.out.println("Sudah kekirim pesan ini: " + srvSentence);
+            // Data yang diterima dari server
+            String srvSentence = inFromServer.readLine();
+            System.out.println("Sudah kekirim pesan ini: " + srvSentence); 
+        } while (!sentence.equals("Disconnect"));
+        
         cliSocket.close();
     }
 }
