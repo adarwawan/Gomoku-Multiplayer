@@ -17,10 +17,12 @@ import java.util.Scanner;
 public class ClientMain {
     public static void main(String argv[]) throws IOException {
         Scanner inFromUser = new Scanner(System.in);
+        System.out.print("Masukkan username: ");
+        String username = inFromUser.nextLine();
         System.out.print("Masukkan address: ");
         String addr = inFromUser.nextLine();
         System.out.print("Masukkan port: ");
         int port = inFromUser.nextInt();
-        Client cli = new Client(addr, port);
+        Client cli = new Client(addr, port, username);
     }
 }

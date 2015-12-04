@@ -3,10 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+
 package servergomoku;
 
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -19,6 +21,8 @@ public class Server {
     private ServerSocket srvSocket;
     private int port;
     private int clientNumber;
+    private ArrayList<User> userLogin = new ArrayList<>();
+    private ArrayList<Room> roomLogin = new ArrayList<>();
     
     /* method */
     public Server (int _port) throws IOException {
@@ -29,21 +33,28 @@ public class Server {
         // Start Run
         try {
             while(true) {
-                new Capitalizer(srvSocket.accept(), clientNumber++).start();
+                new Capitalizer(srvSocket.accept(), clientNumber++, this).start();
             }
         } finally {
             srvSocket.close();
         }
+    }
+    
+    public void AddUser(User user) {
+        userLogin.add(user);
+        //System.out.println("Ayam" + userLogin.get(clientNumber-1).getUsername());
     }
         
     
     private static class Capitalizer extends Thread {
         private Socket socket;
         private int clientNumber;
+        private Server srv;
 
-        public Capitalizer(Socket socket, int clientNumber) {
+        public Capitalizer(Socket socket, int clientNumber, Server _srv) {
             this.socket = socket;
             this.clientNumber = clientNumber;
+            this.srv = _srv;
             log("New connection with client# " + clientNumber + " at " + socket);
         }
         
@@ -52,16 +63,29 @@ public class Server {
                 BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 DataOutputStream out = new DataOutputStream(socket.getOutputStream());
                 
+                User user = new User(clientNumber, in.readLine());
+                srv.AddUser(user);
+                
                 // Kasih ucapan selamat datang dulu
-                String welcomeMessage = "Welcome, Client No." + clientNumber;
+                String welcomeMessage = "" + clientNumber;
                 out.writeBytes(welcomeMessage + '\n');
                 
-                String clientSentence;
+                
+                // Looping sampe mati
+                String command;
                 do {
+                    command = in.readLine();
+                    System.out.println(command);
+                    
+                    parsing(command);                    
+                    
+                    out.writeBytes("makasih" + '\n');
+                    /*
                     clientSentence = in.readLine();
-                    System.out.println("Received: " + clientSentence);
+                    System.out.println(srv.userLogin.get(clientNumber).getUsername() + ": " + clientSentence);
                     out.writeBytes(clientSentence + '\n');
-                } while (!clientSentence.equals("Disconnect"));
+                    */
+                } while (!command.equals("Disconnect"));
                 
             } catch (IOException e) {
                 log("Error handling client# " + clientNumber + ": " + e);
@@ -81,6 +105,33 @@ public class Server {
          */
         private void log(String message) {
             System.out.println(message);
+        }
+
+        private void parsing(String command) {
+            String[] splitSentence = command.split(" ");
+            switch(splitSentence[0]) {
+                case "createroom" :
+                    int playerMax = Integer.parseInt(splitSentence[2]);
+                    Room room = new Room(srv.roomLogin.size(),splitSentence[1],playerMax,srv.userLogin.get(clientNumber));
+                    srv.roomLogin.add(room);
+                    System.out.println("Mama");
+                    break;
+                case "selectroom" :
+                    int idxRoom = Integer.parseInt(splitSentence[1]);
+                    srv.roomLogin.get(idxRoom).addPlayer(srv.userLogin.get(clientNumber));
+                    break;
+                case "start" :
+                    srv.roomLogin.get(srv.userLogin.get(clientNumber).getIdRoom()).startGame();
+                    break;
+                case "userturn" :
+                    int[] move = new int[2];
+                    move[0] = Integer.parseInt(splitSentence[1]);
+                    move[1] = Integer.parseInt(splitSentence[2]);
+                    int idUserInRoom = srv.userLogin.get(clientNumber).getIdUserInRoom();
+                    srv.roomLogin.get(srv.userLogin.get(clientNumber).getIdRoom()).userTurn(move, idUserInRoom);
+                    break;
+                case "update" :
+            }
         }
     }
 }
