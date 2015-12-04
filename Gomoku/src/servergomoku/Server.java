@@ -79,7 +79,7 @@ public class Server {
                     
                     parsing(command);                    
                     
-                    out.writeBytes("makasih" + '\n');
+                    //out.writeBytes("makasih" + '\n');
                     /*
                     clientSentence = in.readLine();
                     System.out.println(srv.userLogin.get(clientNumber).getUsername() + ": " + clientSentence);
@@ -107,18 +107,32 @@ public class Server {
             System.out.println(message);
         }
 
-        private void parsing(String command) {
+        private void parsing(String command) throws IOException {
             String[] splitSentence = command.split(" ");
             switch(splitSentence[0]) {
                 case "createroom" :
+                    DataOutputStream out = new DataOutputStream(socket.getOutputStream());
                     int playerMax = Integer.parseInt(splitSentence[2]);
                     Room room = new Room(srv.roomLogin.size(),splitSentence[1],playerMax,srv.userLogin.get(clientNumber));
                     srv.roomLogin.add(room);
-                    System.out.println("Mama");
+                    String clientSentence = "createSuccess " + srv.roomLogin.size();
+                    for (int i = 0; i < srv.roomLogin.size(); i++){
+                        clientSentence = clientSentence + " " + srv.roomLogin.get(i).getRoomname();
+                        clientSentence = clientSentence + " " + srv.roomLogin.get(i).getPlayerAvailable();
+                        clientSentence = clientSentence + " " + srv.roomLogin.get(i).getPlayerMax();
+                        clientSentence = clientSentence + " " + srv.roomLogin.get(i).getIdRoom();
+                    }
+                    out.writeBytes(clientSentence + '\n');
                     break;
                 case "selectroom" :
+                    out = new DataOutputStream(socket.getOutputStream());
                     int idxRoom = Integer.parseInt(splitSentence[1]);
                     srv.roomLogin.get(idxRoom).addPlayer(srv.userLogin.get(clientNumber));
+                    clientSentence = "selectroom " + srv.roomLogin.get(idxRoom).getPlayers().size();
+                    for(int i = 0; i < srv.roomLogin.get(idxRoom).getPlayers().size(); i++){
+                        clientSentence = clientSentence +  " " + srv.roomLogin.get(idxRoom).getPlayers().get(i).getUsername();
+                    }
+                    out.writeBytes(clientSentence + '\n');
                     break;
                 case "start" :
                     srv.roomLogin.get(srv.userLogin.get(clientNumber).getIdRoom()).startGame();
@@ -131,6 +145,17 @@ public class Server {
                     srv.roomLogin.get(srv.userLogin.get(clientNumber).getIdRoom()).userTurn(move, idUserInRoom);
                     break;
                 case "update" :
+                case "listRoom" :
+                    out = new DataOutputStream(socket.getOutputStream());
+                    clientSentence = "listRoom " + srv.roomLogin.size();
+                    for (int i = 0; i < srv.roomLogin.size(); i++){
+                        clientSentence = clientSentence + " " + srv.roomLogin.get(i).getRoomname();
+                        clientSentence = clientSentence + " " + srv.roomLogin.get(i).getPlayerAvailable();
+                        clientSentence = clientSentence + " " + srv.roomLogin.get(i).getPlayerMax();
+                        clientSentence = clientSentence + " " + srv.roomLogin.get(i).getIdRoom();
+                    }
+                    out.writeBytes(clientSentence + '\n');
+                    break;
             }
         }
     }

@@ -23,6 +23,8 @@ public class Client {
     private String username;
     private int idUser;
     private int idRoom;
+    public DataOutputStream outToServer;
+    public BufferedReader inFromServer;
     
     /* method */
     public Client(String _addr, int _port, String _username) throws IOException {
@@ -34,15 +36,16 @@ public class Client {
         
         cliSocket = new Socket(addr, port);
         
-        DataOutputStream outToServer = new DataOutputStream(cliSocket.getOutputStream());
-        BufferedReader inFromServer = new BufferedReader(new InputStreamReader(cliSocket.getInputStream()));
+        outToServer = new DataOutputStream(cliSocket.getOutputStream());
+        inFromServer = new BufferedReader(new InputStreamReader(cliSocket.getInputStream()));
         
         outToServer.writeBytes(username + '\n');
         
         String userId = inFromServer.readLine();
         idUser = Integer.parseInt(userId);
         System.out.println("User ID: " + userId);
-        
+        //--------------------------
+        //RoomGUI dssds = new 
         // Looping sampe mati
         String sentence;
         do {

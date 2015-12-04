@@ -36,6 +36,10 @@ public class Room {
         playerAvailable = 1;
     }
     
+    public ArrayList<User> getPlayers(){
+        return listPlayer;
+    }
+    
     public void addPlayer(User _user) {
         _user.setIdRoom(idRoom);
         _user.setIdUserInRoom(listPlayer.size() + 1);
