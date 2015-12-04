@@ -50,7 +50,6 @@ public class Game {
             if (checkwin) {
                 break;
             }
-        }
-    
+        }    
     }
 }
