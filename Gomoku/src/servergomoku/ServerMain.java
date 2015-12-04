@@ -8,6 +8,7 @@ package servergomoku;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Scanner;
 
 /**
  *
@@ -15,9 +16,9 @@ import java.io.InputStreamReader;
  */
 public class ServerMain {
     public static void main(String argv[]) throws IOException {
-        BufferedReader inFromUser = new BufferedReader( new InputStreamReader(System.in));
+        Scanner inFromUser = new Scanner(System.in);
         System.out.print("Masukkan port: ");
-        int port = inFromUser.read();
+        int port = inFromUser.nextInt();
         Server srv = new Server(port);
     }
 }

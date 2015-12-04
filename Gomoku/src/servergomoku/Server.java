@@ -53,7 +53,7 @@ public class Server {
                 DataOutputStream out = new DataOutputStream(socket.getOutputStream());
                 
                 // Kasih ucapan selamat datang dulu
-                String welcomeMessage = "Welcome, Fanda";
+                String welcomeMessage = "Welcome, Client No." + clientNumber;
                 out.writeBytes(welcomeMessage + '\n');
                 
                 String clientSentence;

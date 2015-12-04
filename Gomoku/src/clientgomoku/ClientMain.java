@@ -8,6 +8,7 @@ package clientgomoku;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Scanner;
 
 /**
  *
@@ -15,11 +16,11 @@ import java.io.InputStreamReader;
  */
 public class ClientMain {
     public static void main(String argv[]) throws IOException {
-        BufferedReader inFromUser = new BufferedReader( new InputStreamReader(System.in));
+        Scanner inFromUser = new Scanner(System.in);
         System.out.print("Masukkan address: ");
-        String addr = inFromUser.readLine();
+        String addr = inFromUser.nextLine();
         System.out.print("Masukkan port: ");
-        int port = inFromUser.read();
+        int port = inFromUser.nextInt();
         Client cli = new Client(addr, port);
     }
 }
