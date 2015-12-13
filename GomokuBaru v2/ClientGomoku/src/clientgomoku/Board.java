@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package servergomoku;
+package clientgomoku;
 
 /**
  *
@@ -37,10 +37,6 @@ public class Board {
 
     public void setGameBoard(int[][] gameBoard) {
         this.GameBoard = gameBoard;
-    }
-    
-    public int getBoardContent(int x, int y){
-        return this.GameBoard[x][y];
     }
 
     public int getNumPlayer() {

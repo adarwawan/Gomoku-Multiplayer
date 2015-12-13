@@ -63,13 +63,19 @@ public class Server {
                 BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 DataOutputStream out = new DataOutputStream(socket.getOutputStream());
                 
-                User user = new User(clientNumber, in.readLine());
-                srv.AddUser(user);
-                
-                // Kasih ucapan selamat datang dulu
-                String welcomeMessage = "" + clientNumber;
-                out.writeBytes(welcomeMessage + '\n');
-                
+                String _uname = in.readLine();
+                boolean found = false;
+                for(int i = 0; i <srv.userLogin.size(); i++){
+                    System.out.println(i);
+                    if (srv.userLogin.get(i).getUsername().equals(_uname)) found = true;
+                }
+                if (found){
+                    out.writeBytes("loginFailed\n");
+                }else{
+                    User user = new User(clientNumber, _uname);
+                    srv.AddUser(user);
+                    out.writeBytes("loginSuccess " + clientNumber + "\n");
+                }                
                 
                 // Looping sampe mati
                 String command;
@@ -79,8 +85,7 @@ public class Server {
                     
                     parsing(command);                    
                     
-                    out.writeBytes("makasih" + '\n');
-                    System.out.println(srv.roomLogin);
+                    //out.writeBytes("makasih" + '\n');
                     /*
                     clientSentence = in.readLine();
                     System.out.println(srv.userLogin.get(clientNumber).getUsername() + ": " + clientSentence);
@@ -112,16 +117,77 @@ public class Server {
             String[] splitSentence = command.split(" ");
             switch(splitSentence[0]) {
                 case "createroom" :
+                    DataOutputStream out = new DataOutputStream(socket.getOutputStream());
                     int playerMax = Integer.parseInt(splitSentence[2]);
                     Room room = new Room(srv.roomLogin.size(),splitSentence[1],playerMax,srv.userLogin.get(clientNumber));
-                    srv.roomLogin.add(room);
+                    boolean found = false;
+                    for (int i = 0; i < srv.roomLogin.size(); i++){
+                        if (srv.roomLogin.get(i).getRoomname().equals(splitSentence[1])) found = true;
+                    }
+                    if (found){
+                        out.writeBytes("createFailed\n");
+                    }else{
+                        srv.roomLogin.add(room);
+                        String clientSentence = "createSuccess";
+                        int i = srv.roomLogin.size() - 1;
+                        clientSentence = clientSentence + " " + srv.roomLogin.get(i).getRoomname();
+                        clientSentence = clientSentence + " " + srv.roomLogin.get(i).getPlayerAvailable();
+                        clientSentence = clientSentence + " " + srv.roomLogin.get(i).getPlayerMax();
+                        clientSentence = clientSentence + " " + srv.roomLogin.get(i).getIdRoom();
+                        out.writeBytes(clientSentence + '\n');
+                    }
                     break;
                 case "selectroom" :
+                    out = new DataOutputStream(socket.getOutputStream());
                     int idxRoom = Integer.parseInt(splitSentence[1]);
-                    srv.roomLogin.get(idxRoom).addPlayer(srv.userLogin.get(clientNumber));
+                    String clientSentence = "";
+                    if (srv.roomLogin.get(idxRoom).getPlayerMax() == srv.roomLogin.get(idxRoom).getPlayers().size()){
+                        clientSentence = "selectroomFailed";
+                    }else{
+                        srv.roomLogin.get(idxRoom).addPlayer(srv.userLogin.get(clientNumber));
+                        clientSentence = "selectroomSuccess";
+                    }
+                    out.writeBytes(clientSentence + '\n');
                     break;
-                case "start" :
-                    srv.roomLogin.get(srv.userLogin.get(clientNumber).getIdRoom()).startGame();
+                case "listplayer" :
+                    out = new DataOutputStream(socket.getOutputStream());
+                    idxRoom = Integer.parseInt(splitSentence[1]);;
+                    
+                    clientSentence = srv.roomLogin.get(idxRoom).getStatus() + "listplayer " + srv.roomLogin.get(idxRoom).getPlayers().size();
+                    
+                    for(int i = 0; i < srv.roomLogin.get(idxRoom).getPlayers().size(); i++){
+                        clientSentence = clientSentence +  " " + srv.roomLogin.get(idxRoom).getPlayers().get(i).getUsername();
+                    }
+                    out.writeBytes(clientSentence + '\n');
+                    break;
+                case "play" :
+                    out = new DataOutputStream(socket.getOutputStream());
+                    if (srv.roomLogin.get(srv.userLogin.get(clientNumber).getIdRoom()).getStatus() == 0){
+                        srv.roomLogin.get(srv.userLogin.get(clientNumber).getIdRoom()).startGame();
+                        clientSentence = "1play " + srv.roomLogin.get(srv.userLogin.get(clientNumber).getIdRoom()).getPlayers().get(srv.roomLogin.get(srv.userLogin.get(clientNumber).getIdRoom()).getIdTurn() - 1).getUsername();
+                        for(int i = 0; i < 20; i++){
+                            for (int j = 0; j < 20; j++){
+                                clientSentence = clientSentence + " " + srv.roomLogin.get(srv.userLogin.get(clientNumber).getIdRoom()).getBoard(i,j);
+                            }
+                        }
+                        out.writeBytes(clientSentence + '\n');
+                    }else if (srv.roomLogin.get(srv.userLogin.get(clientNumber).getIdRoom()).getStatus() == 1){
+                        clientSentence = "1play " + srv.roomLogin.get(srv.userLogin.get(clientNumber).getIdRoom()).getPlayers().get(srv.roomLogin.get(srv.userLogin.get(clientNumber).getIdRoom()).getIdTurn() - 1).getUsername();
+                        for(int i = 0; i < 20; i++){
+                            for (int j = 0; j < 20; j++){
+                                clientSentence = clientSentence + " " + srv.roomLogin.get(srv.userLogin.get(clientNumber).getIdRoom()).getBoard(i,j);
+                            }
+                        }
+                        out.writeBytes(clientSentence + '\n');
+                    }else{
+                        clientSentence = "2play " + srv.roomLogin.get(srv.userLogin.get(clientNumber).getIdRoom()).getPlayers().get(srv.roomLogin.get(srv.userLogin.get(clientNumber).getIdRoom()).getWinner() - 1).getUsername();
+                        for(int i = 0; i < 20; i++){
+                            for (int j = 0; j < 20; j++){
+                                clientSentence = clientSentence + " " + srv.roomLogin.get(srv.userLogin.get(clientNumber).getIdRoom()).getBoard(i,j);
+                            }
+                        }
+                        out.writeBytes(clientSentence + '\n');
+                    }
                     break;
                 case "userturn" :
                     int[] move = new int[2];
@@ -131,14 +197,16 @@ public class Server {
                     srv.roomLogin.get(srv.userLogin.get(clientNumber).getIdRoom()).userTurn(move, idUserInRoom);
                     break;
                 case "update" :
-                    break;
                 case "listRoom" :
-                    DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-                    String clientSentence = "listroom " + srv.roomLogin.size();
-                    for (int i = 0; i < srv.roomLogin.size(); i++) {
+                    out = new DataOutputStream(socket.getOutputStream());
+                    clientSentence = "listRoom " + srv.roomLogin.size();
+                    for (int i = 0; i < srv.roomLogin.size(); i++){
                         clientSentence = clientSentence + " " + srv.roomLogin.get(i).getRoomname();
+                        clientSentence = clientSentence + " " + srv.roomLogin.get(i).getPlayerAvailable();
+                        clientSentence = clientSentence + " " + srv.roomLogin.get(i).getPlayerMax();
+                        clientSentence = clientSentence + " " + srv.roomLogin.get(i).getIdRoom();
                     }
-                    out.writeBytes(clientSentence + '\n');  
+                    out.writeBytes(clientSentence + '\n');
                     break;
             }
         }

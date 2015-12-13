@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package servergomoku;
+package clientgomoku;
 
 import java.util.ArrayList;
 
@@ -62,19 +62,6 @@ public class Room {
             status = 2;
             idWin = _idUserInRoom;
         }
-        if (idTurn == listPlayer.size()){
-            idTurn = 1;
-        }else{
-            idTurn++;
-        }
-    }
-    
-    public int getBoard (int x, int y){
-        return board.getBoardContent(x,y);
-    }
-    
-    public int getWinner(){
-        return idWin;
     }
     
     public void pesanKemenangan (int _idUserInRoom) {
@@ -133,5 +120,4 @@ public class Room {
     public void setStatus (int _status) {
         status = _status;
     }
-    
 }
