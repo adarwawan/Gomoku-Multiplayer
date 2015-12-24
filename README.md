@@ -1,14 +1,17 @@
 # Gomoku-Multiplayer
 
+November 2015
+
 ------------------------------------------
 
 ## Dibuat oleh :
 
 Muhammad Ridwan (13513008)
+
 Mochammad Try Yulyanto (13513067)
+
 Ahmad Darmawan (13513096)
 
-Copyright - November 2015
 ------------------------------------------
 
 ## Cara Pemakaian
