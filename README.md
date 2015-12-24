@@ -33,22 +33,4 @@ Alur umum program adalah sebagai berikut:
 - Ketika ada yang memenangkan game, tampilan pada pemenang menyatakan “Anda menang” dan tampilan pada player lain yang kalah adalah “<Nickname pemenang> adalah pemenangnya!” Tampilkan juga kelima biji yang berurutan dengan tanda tertentu.
 - Setelah game selesai user dikembalikan ke antarmuka sebelumnya
 
-Bahasa yang boleh dipergunakan adalah: C, C++, Java, Python, Go, VB, C#, Perl.
-
-Implementasi server dan client boleh menggunakan Bahasa yang berbeda.
-
-Library yang boleh dipergunakan adalah:
-- Library standard bawaan bahasa
-- Semua jenis library GUI
-- Semua jenis library Threading (termasuk locking dan thread pool)
-- Library networking hanya terbatas pada Socket dan Serversocket TCP. Boleh menggunakan synchronous ataupun asynchronous socket.
-- Library lainnya tergantung seizing asisten (harap ditanyakan pada milis)
-
-Tidak diperkenankan menggunakan library HTTP maupun web service.
-
 Program dapat dijalankan pada sistem operasi Windows atau Linux.
-
-## Bonus
-- Room memiliki sebuah chatbox yang dapat digunakan player yang sedang bermain di room tersebut untuk berkomunikasi
-- Room dapat dimasuki oleh orang yang ingin menjadi spectator (tidak bermain, hanya melihat permainan yang sedang berlangsung)
-- Menyimpan highscore yang dapat ditampilkan dari menu utama
