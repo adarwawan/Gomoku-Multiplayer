@@ -1,5 +1,26 @@
 # Gomoku-Multiplayer
 
+------------------------------------------
+
+## Dibuat oleh :
+
+Muhammad Ridwan (13513008)
+Mochammad Try Yulyanto (13513067)
+Ahmad Darmawan (13513096)
+
+Copyright - November 2015
+------------------------------------------
+
+## Cara Pemakaian
+
+Server:
+- Buka ServerGomoku.jar
+- Masukkan nomor port yang akan digunakan
+
+Client :
+- Buka ClientGomoku.jar
+- Masukkan "Username", "Alamat Server", dan "Port Server"
+
 Aplikasi ini merupakan variasi dari game Gomoku dengan spesifikasi berikut :
 - Game dimainkan oleh 3 atau lebih orang
 - Menggunakan arsitektur Client-Server
